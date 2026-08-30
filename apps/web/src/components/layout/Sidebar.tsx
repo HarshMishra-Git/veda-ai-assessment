@@ -47,16 +47,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       <aside
         className={`
-          bg-white flex flex-col justify-between p-3 rounded-2xl shadow-sm border border-slate-200/70 select-none transition-all duration-300
-          fixed md:relative inset-y-3 left-3 z-50 md:z-0
+          h-full bg-white transition-all duration-300 flex flex-col justify-between p-3 rounded-2xl shadow-sm border border-slate-200/70 select-none shrink-0
+          fixed md:relative inset-y-3 left-3 z-50 md:z-0 md:inset-y-0 md:left-0
           ${mobileOpen ? "translate-x-0 w-[240px]" : "-translate-x-[110%] md:translate-x-0"}
           ${collapsed ? "md:w-[72px] md:items-center" : "md:w-[240px]"}
-          h-[calc(100vh-24px)]
         `}
       >
         {/* Top Section */}
         <div className="flex flex-col gap-4 w-full">
-          {/* Brand Logo & Collapse / Close Icon */}
+          {/* Brand Logo & Collapse Icon */}
           <div className="flex items-center justify-between px-2 pt-1 pb-1">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-neutral-900 flex items-center justify-center text-white font-black text-xl shadow-sm shrink-0">
@@ -81,7 +80,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             {!collapsed && (
               <button
                 onClick={onToggleCollapse}
-                className="hidden md:flex text-neutral-400 hover:text-neutral-700 transition p-1 rounded-md hover:bg-neutral-100"
+                className="hidden md:flex text-neutral-400 hover:text-neutral-700 transition p-1 rounded-md hover:bg-neutral-100 cursor-pointer"
                 title="Collapse Sidebar"
               >
                 <PanelLeftClose className="w-4 h-4" />
@@ -94,13 +93,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
             {collapsed && !mobileOpen ? (
               <button
                 onClick={onToggleCollapse}
-                className="w-10 h-10 mx-auto rounded-full bg-gradient-to-r from-neutral-800 to-neutral-900 border-2 border-orange-500/80 flex items-center justify-center text-white shadow-md hover:scale-105 transition"
+                className="w-10 h-10 mx-auto rounded-full bg-gradient-to-r from-neutral-800 to-neutral-900 border-2 border-orange-500/80 flex items-center justify-center text-white shadow-md hover:scale-105 transition cursor-pointer"
                 title="AI Teacher's Toolkit"
               >
                 <Sparkles className="w-4 h-4 text-orange-400" />
               </button>
             ) : (
-              <button className="w-full h-11 rounded-full bg-gradient-to-r from-neutral-800 to-neutral-900 border-2 border-orange-500/80 text-white font-medium text-xs flex items-center justify-center gap-2 shadow-sm hover:brightness-110 transition">
+              <button className="w-full h-11 rounded-full bg-gradient-to-r from-neutral-800 to-neutral-900 border-2 border-orange-500/80 text-white font-medium text-xs flex items-center justify-center gap-2 shadow-sm hover:brightness-110 transition cursor-pointer">
                 <Sparkles className="w-4 h-4 text-orange-400" />
                 <span>AI Teacher&apos;s Toolkit</span>
               </button>
@@ -148,7 +147,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               </div>
               <button
                 onClick={onToggleCollapse}
-                className="p-1 rounded-md text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 transition"
+                className="p-1 rounded-md text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 transition cursor-pointer"
                 title="Expand Sidebar"
               >
                 <ChevronsRight className="w-4 h-4" />
