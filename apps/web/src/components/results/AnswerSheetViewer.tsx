@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { ZoomIn, ZoomOut, ChevronLeft, ChevronRight, AlertCircle, FileQuestion } from "lucide-react";
+import { ZoomIn, ZoomOut, ChevronLeft, ChevronRight, FileQuestion } from "lucide-react";
 import { DocumentInfo, QuestionItem, UnmatchedAnswerItemBackend } from "@/types/assessment";
 
 interface AnswerSheetViewerProps {
@@ -61,13 +61,13 @@ export const AnswerSheetViewer: React.FC<AnswerSheetViewerProps> = ({
   const clamp = (val: number, min: number, max: number) => Math.max(min, Math.min(val, max));
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-white rounded-2xl border border-slate-200/70 overflow-hidden shadow-xs select-none">
+    <div className="flex-1 flex flex-col h-full bg-white rounded-2xl border border-slate-200/70 overflow-hidden shadow-xs select-none min-h-[400px] md:min-h-0">
       {/* Viewer Header / Toolbar */}
-      <div className="w-full h-11 bg-neutral-800 text-white px-4 flex items-center justify-between shrink-0">
-        <div className="flex items-center gap-3">
-          <span className="text-xs font-semibold text-neutral-200">Answer Sheet</span>
+      <div className="w-full min-h-[44px] py-1.5 bg-neutral-800 text-white px-3 sm:px-4 flex flex-wrap items-center justify-between gap-2 shrink-0">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+          <span className="text-xs font-semibold text-neutral-200 shrink-0">Answer Sheet</span>
           {activeQuestion && (
-            <span className="text-[10px] px-2 py-0.5 rounded-full font-mono bg-neutral-700 text-neutral-300">
+            <span className="text-[10px] px-2 py-0.5 rounded-full font-mono bg-neutral-700 text-neutral-300 truncate max-w-[140px] sm:max-w-none">
               {activeQuestion.status === "unanswered"
                 ? "Unanswered"
                 : `Q${activeQuestion.number}${activeQuestion.subQuestions ? " (Subparts)" : ""} Mapped`}
@@ -75,9 +75,9 @@ export const AnswerSheetViewer: React.FC<AnswerSheetViewerProps> = ({
           )}
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           {/* Zoom Controls */}
-          <div className="flex items-center bg-neutral-700/80 rounded-lg px-2 py-1 text-xs text-neutral-200 gap-2">
+          <div className="flex items-center bg-neutral-700/80 rounded-lg px-1.5 sm:px-2 py-1 text-xs text-neutral-200 gap-1.5 sm:gap-2">
             <button
               onClick={handleZoomOut}
               className="hover:text-white transition disabled:opacity-40"
@@ -86,7 +86,7 @@ export const AnswerSheetViewer: React.FC<AnswerSheetViewerProps> = ({
             >
               <ZoomOut className="w-3.5 h-3.5" />
             </button>
-            <span className="font-mono text-[11px] min-w-[36px] text-center font-medium">
+            <span className="font-mono text-[10px] sm:text-[11px] min-w-[30px] sm:min-w-[36px] text-center font-medium">
               {zoomLevel}%
             </span>
             <button
@@ -100,7 +100,7 @@ export const AnswerSheetViewer: React.FC<AnswerSheetViewerProps> = ({
           </div>
 
           {/* Page Navigation */}
-          <div className="flex items-center bg-neutral-700/80 rounded-lg px-1.5 py-1 text-xs text-neutral-200 gap-1.5">
+          <div className="flex items-center bg-neutral-700/80 rounded-lg px-1.5 py-1 text-xs text-neutral-200 gap-1">
             <button
               onClick={() => onPageChange(Math.max(currentPage - 1, 1))}
               disabled={currentPage <= 1}
@@ -109,8 +109,8 @@ export const AnswerSheetViewer: React.FC<AnswerSheetViewerProps> = ({
             >
               <ChevronLeft className="w-3.5 h-3.5" />
             </button>
-            <span className="text-[11px] font-medium px-1">
-              Page {currentPage} of {totalPages}
+            <span className="text-[10px] sm:text-[11px] font-medium px-0.5 sm:px-1">
+              {currentPage}/{totalPages}
             </span>
             <button
               onClick={() => onPageChange(Math.min(currentPage + 1, totalPages))}
@@ -125,9 +125,9 @@ export const AnswerSheetViewer: React.FC<AnswerSheetViewerProps> = ({
       </div>
 
       {/* Answer Sheet Canvas / Scroll Area */}
-      <div className="flex-1 overflow-auto bg-neutral-200/60 p-4 flex justify-center items-start relative">
+      <div className="flex-1 overflow-auto bg-neutral-200/60 p-2 sm:p-4 flex justify-center items-start relative">
         <div
-          className="relative notebook-paper w-full max-w-[620px] rounded-lg shadow-md border border-neutral-300 transition-transform duration-150 origin-top overflow-hidden bg-white"
+          className="relative notebook-paper w-full max-w-[620px] rounded-lg shadow-md border border-neutral-300 transition-transform duration-150 origin-top overflow-hidden bg-white shrink-0"
           style={{
             transform: `scale(${zoomLevel / 100})`,
             minHeight: "780px",
@@ -135,9 +135,9 @@ export const AnswerSheetViewer: React.FC<AnswerSheetViewerProps> = ({
         >
           {/* Unanswered Overlay Banner if student skipped question */}
           {isUnanswered && (
-            <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 bg-amber-500/90 text-white text-xs font-semibold px-4 py-2 rounded-full shadow-lg flex items-center gap-2 backdrop-blur-xs">
-              <FileQuestion className="w-4 h-4" />
-              <span>No student answer written for Question {activeQuestion?.number} (Unanswered)</span>
+            <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 bg-amber-500/90 text-white text-[11px] sm:text-xs font-semibold px-3 py-1.5 sm:px-4 sm:py-2 rounded-full shadow-lg flex items-center gap-1.5 backdrop-blur-xs max-w-[90%] text-center">
+              <FileQuestion className="w-4 h-4 shrink-0" />
+              <span>No answer for Question {activeQuestion?.number} (Unanswered)</span>
             </div>
           )}
 
@@ -160,33 +160,33 @@ export const AnswerSheetViewer: React.FC<AnswerSheetViewerProps> = ({
               </div>
 
               {currentPage === 1 && (
-                <div className="pt-6 pl-16 pr-6 space-y-6 text-slate-800 font-sans text-xs select-text">
+                <div className="pt-6 pl-12 sm:pl-16 pr-4 sm:pr-6 space-y-6 text-slate-800 font-sans text-xs select-text">
                   <div className="relative">
-                    <span className="absolute -left-12 font-serif font-bold text-neutral-700">Q1.</span>
-                    <p className="leading-7 tracking-wide font-serif text-slate-800 text-[13px]">
+                    <span className="absolute -left-9 sm:-left-12 font-serif font-bold text-neutral-700">Q1.</span>
+                    <p className="leading-7 tracking-wide font-serif text-slate-800 text-[12px] sm:text-[13px]">
                       Photosynthesis is the process used by green plants and some other organisms to convert light energy into chemical energy.
                     </p>
-                    <div className="my-3 mx-auto w-fit border border-neutral-700/80 px-4 py-1.5 text-center font-serif text-[12px] bg-white/60 rounded-xs">
+                    <div className="my-3 mx-auto w-fit border border-neutral-700/80 px-3 sm:px-4 py-1.5 text-center font-serif text-[11px] sm:text-[12px] bg-white/60 rounded-xs">
                       6CO₂ + 6H₂O  <span className="mx-2 text-[10px]">⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯→<br/><span className="text-[9px]">Light / Chlorophyll</span></span>  C₆H₁₂O₆ + 6O₂
                     </div>
-                    <div className="flex flex-col items-center justify-center my-3 text-[11px] text-neutral-600 font-serif">
+                    <div className="flex flex-col items-center justify-center my-3 text-[10px] sm:text-[11px] text-neutral-600 font-serif">
                       <div className="flex items-center gap-2">
                         <span>☀ Sunlight</span>
                       </div>
-                      <div className="flex items-center gap-6 my-1">
+                      <div className="flex items-center gap-4 sm:gap-6 my-1">
                         <span>Carbon dioxide →</span>
-                        <div className="w-12 h-16 border-b-2 border-dashed border-neutral-800 flex items-center justify-center text-xl">
+                        <div className="w-10 sm:w-12 h-14 sm:h-16 border-b-2 border-dashed border-neutral-800 flex items-center justify-center text-lg sm:text-xl">
                           🌿
                         </div>
                         <span>→ Oxygen</span>
                       </div>
-                      <span className="text-[10px] text-neutral-500">⇣ Water</span>
+                      <span className="text-[9px] sm:text-[10px] text-neutral-500">⇣ Water</span>
                     </div>
                   </div>
 
                   <div className="relative mt-8">
-                    <span className="absolute -left-12 font-serif font-bold text-neutral-700">Q2.</span>
-                    <p className="leading-7 tracking-wide font-serif text-slate-800 text-[13px]">
+                    <span className="absolute -left-9 sm:-left-12 font-serif font-bold text-neutral-700">Q2.</span>
+                    <p className="leading-7 tracking-wide font-serif text-slate-800 text-[12px] sm:text-[13px]">
                       The process mainly occurs in the chloroplast of the plant cell. It has two main stages:
                       <br />
                       1. Light reaction – Captures light energy.
@@ -198,10 +198,10 @@ export const AnswerSheetViewer: React.FC<AnswerSheetViewerProps> = ({
               )}
 
               {currentPage === 2 && (
-                <div className="pt-6 pl-16 pr-6 space-y-6 text-slate-800 font-sans text-xs select-text">
+                <div className="pt-6 pl-12 sm:pl-16 pr-4 sm:pr-6 space-y-6 text-slate-800 font-sans text-xs select-text">
                   <div className="relative">
-                    <span className="absolute -left-12 font-serif font-bold text-neutral-700">Q4.</span>
-                    <p className="leading-7 tracking-wide font-serif text-slate-800 text-[13px]">
+                    <span className="absolute -left-9 sm:-left-12 font-serif font-bold text-neutral-700">Q4.</span>
+                    <p className="leading-7 tracking-wide font-serif text-slate-800 text-[12px] sm:text-[13px]">
                       Blood from the body enters the right atrium via the vena cava, passes through the tricuspid valve into the right ventricle, and is pumped into the pulmonary artery through the pulmonary valve.
                     </p>
                   </div>
@@ -228,7 +228,7 @@ export const AnswerSheetViewer: React.FC<AnswerSheetViewerProps> = ({
                   height: `${height}%`,
                 }}
               >
-                <div className="absolute -top-3.5 left-2 bg-emerald-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md shadow-xs flex items-center justify-center">
+                <div className="absolute -top-3.5 left-2 bg-emerald-600 text-white text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded-md shadow-xs flex items-center justify-center">
                   Q{activeQuestion?.number} {loc.is_continuation ? "(Cont.)" : ""}
                 </div>
               </div>
@@ -246,7 +246,7 @@ export const AnswerSheetViewer: React.FC<AnswerSheetViewerProps> = ({
                 height: `${clamp(activeQuestion.highlightBox.height, 2, 100 - activeQuestion.highlightBox.y)}%`,
               }}
             >
-              <div className="absolute -top-3.5 left-2 bg-emerald-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md shadow-xs flex items-center justify-center">
+              <div className="absolute -top-3.5 left-2 bg-emerald-600 text-white text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded-md shadow-xs flex items-center justify-center">
                 Q{activeQuestion.number}
               </div>
             </div>
@@ -270,7 +270,7 @@ export const AnswerSheetViewer: React.FC<AnswerSheetViewerProps> = ({
                   height: `${height}%`,
                 }}
               >
-                <div className="absolute -top-3.5 left-2 bg-amber-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md shadow-xs flex items-center justify-center">
+                <div className="absolute -top-3.5 left-2 bg-amber-600 text-white text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded-md shadow-xs flex items-center justify-center">
                   Unmatched Notes
                 </div>
               </div>

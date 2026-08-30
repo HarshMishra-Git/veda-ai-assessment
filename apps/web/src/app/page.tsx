@@ -18,10 +18,13 @@ import {
   UploadedFileMeta,
 } from "@/types/assessment";
 import { INITIAL_QUESTIONS } from "@/data/mockAssessment";
+import { FileText, CheckSquare } from "lucide-react";
 
 export default function AssessmentPage() {
   // Navigation & Layout State
   const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
+  const [activeMobileTab, setActiveMobileTab] = useState<"questions" | "viewer">("questions");
   const [appState, setAppState] = useState<AppFlowState>("upload-empty");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -39,7 +42,7 @@ export default function AssessmentPage() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [zoomLevel, setZoomLevel] = useState<number>(100);
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8100";
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://vedaai-api.up.railway.app";
 
   // File Upload Handlers with Client-Side Validation
   const validateUploadedFile = (file: File): boolean => {
@@ -238,7 +241,6 @@ export default function AssessmentPage() {
     } catch (err: unknown) {
       console.warn("Backend pipeline error:", err);
     } finally {
-      // Transition to results screen
       setTimeout(() => {
         setAppState("results");
         setSidebarCollapsed(true);
@@ -285,19 +287,22 @@ export default function AssessmentPage() {
   };
 
   return (
-    <div className="flex h-screen w-screen bg-[#f1f3f5] p-3 gap-3 overflow-hidden">
-      {/* Left Sidebar */}
+    <div className="flex h-screen w-screen bg-[#f1f3f5] p-2 sm:p-3 gap-2 sm:gap-3 overflow-hidden">
+      {/* Sidebar (Responsive drawer on mobile, collapsible on desktop) */}
       <Sidebar
         collapsed={sidebarCollapsed}
         onToggleCollapse={() => setSidebarCollapsed((prev) => !prev)}
+        mobileOpen={mobileMenuOpen}
+        onCloseMobile={() => setMobileMenuOpen(false)}
       />
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col gap-3 h-full overflow-hidden">
+      <div className="flex-1 flex flex-col gap-2 sm:gap-3 h-full overflow-hidden min-w-0">
         {/* Top Header */}
         <Header
           showBack={appState !== "upload-empty"}
           onBack={handleHeaderBack}
+          onOpenMobileMenu={() => setMobileMenuOpen(true)}
         />
 
         {/* View States */}
@@ -331,33 +336,86 @@ export default function AssessmentPage() {
         {appState === "processing" && <ExtractingLoader />}
 
         {appState === "results" && (
-          <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-3 h-full overflow-hidden">
-            {/* Extracted Questions List */}
-            <div className="h-full overflow-hidden flex flex-col">
-              <QuestionList
-                questions={questions}
-                activeQuestionId={activeQuestionId}
-                onSelectQuestion={handleSelectQuestion}
-                onSelectSubQuestion={handleSelectSubQuestion}
-                unmatchedAnswers={mappingData?.unmatched_answers || []}
-                selectedUnmatchedId={selectedUnmatched?.answer_id}
-                onSelectUnmatched={handleSelectUnmatched}
-              />
+          <div className="flex-1 flex flex-col h-full overflow-hidden">
+            {/* Mobile Tab Switcher for Results View */}
+            <div className="flex md:hidden bg-white rounded-xl p-1 mb-2 border border-slate-200 shrink-0 shadow-2xs">
+              <button
+                onClick={() => setActiveMobileTab("questions")}
+                className={`flex-1 py-1.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition ${
+                  activeMobileTab === "questions"
+                    ? "bg-neutral-900 text-white shadow-xs"
+                    : "text-neutral-600 hover:text-neutral-900"
+                }`}
+              >
+                <CheckSquare className="w-3.5 h-3.5" />
+                <span>Questions ({questions.length})</span>
+              </button>
+              <button
+                onClick={() => setActiveMobileTab("viewer")}
+                className={`flex-1 py-1.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition ${
+                  activeMobileTab === "viewer"
+                    ? "bg-neutral-900 text-white shadow-xs"
+                    : "text-neutral-600 hover:text-neutral-900"
+                }`}
+              >
+                <FileText className="w-3.5 h-3.5" />
+                <span>Answer Sheet</span>
+              </button>
             </div>
 
-            {/* Answer Sheet Viewer */}
-            <div className="h-full overflow-hidden flex flex-col">
-              <AnswerSheetViewer
-                currentPage={currentPage}
-                totalPages={ingestionJob?.answer_sheet?.total_pages || 4}
-                zoomLevel={zoomLevel}
-                onPageChange={setCurrentPage}
-                onZoomChange={setZoomLevel}
-                activeQuestion={activeQuestion}
-                answerSheetDoc={ingestionJob?.answer_sheet}
-                apiBaseUrl={apiUrl}
-                selectedUnmatchedAnswer={selectedUnmatched}
-              />
+            {/* Main Results Grid / Tabs */}
+            <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-3 h-full overflow-hidden">
+              {/* Extracted Questions List */}
+              <div
+                className={`h-full overflow-hidden flex flex-col ${
+                  activeMobileTab === "viewer" ? "hidden md:flex" : "flex"
+                }`}
+              >
+                <QuestionList
+                  questions={questions}
+                  activeQuestionId={activeQuestionId}
+                  onSelectQuestion={(q) => {
+                    handleSelectQuestion(q);
+                    // On mobile, automatically show the viewer when a question is clicked
+                    if (window.innerWidth < 768) {
+                      setActiveMobileTab("viewer");
+                    }
+                  }}
+                  onSelectSubQuestion={(subQ, parentQ) => {
+                    handleSelectSubQuestion(subQ, parentQ);
+                    if (window.innerWidth < 768) {
+                      setActiveMobileTab("viewer");
+                    }
+                  }}
+                  unmatchedAnswers={mappingData?.unmatched_answers || []}
+                  selectedUnmatchedId={selectedUnmatched?.answer_id}
+                  onSelectUnmatched={(u) => {
+                    handleSelectUnmatched(u);
+                    if (window.innerWidth < 768) {
+                      setActiveMobileTab("viewer");
+                    }
+                  }}
+                />
+              </div>
+
+              {/* Answer Sheet Viewer */}
+              <div
+                className={`h-full overflow-hidden flex flex-col ${
+                  activeMobileTab === "questions" ? "hidden md:flex" : "flex"
+                }`}
+              >
+                <AnswerSheetViewer
+                  currentPage={currentPage}
+                  totalPages={ingestionJob?.answer_sheet?.total_pages || 4}
+                  zoomLevel={zoomLevel}
+                  onPageChange={setCurrentPage}
+                  onZoomChange={setZoomLevel}
+                  activeQuestion={activeQuestion}
+                  answerSheetDoc={ingestionJob?.answer_sheet}
+                  apiBaseUrl={apiUrl}
+                  selectedUnmatchedAnswer={selectedUnmatched}
+                />
+              </div>
             </div>
           </div>
         )}
