@@ -1,0 +1,79 @@
+services:
+  # ----------------------------------------------------------------------------
+  # PostgreSQL Database (Host Port 5445 -> Container Port 5432)
+  # ----------------------------------------------------------------------------
+  db:
+    image: postgres:16-alpine
+    container_name: vedaai-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-vedaai_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-vedaai_password}
+      POSTGRES_DB: ${POSTGRES_DB:-vedaai_db}
+    ports:
+      - "${POSTGRES_PORT:-5445}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-vedaai_user} -d ${POSTGRES_DB:-vedaai_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - vedaai-network
+
+  # ----------------------------------------------------------------------------
+  # FastAPI Backend API (Host Port 8100 -> Container Port 8000)
+  # ----------------------------------------------------------------------------
+  api:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+    container_name: vedaai-api
+    restart: unless-stopped
+    ports:
+      - "${API_PORT:-8100}:8000"
+    environment:
+      PORT: 8000
+      HOST: 0.0.0.0
+      ENVIRONMENT: production
+      DATABASE_URL: postgresql://${POSTGRES_USER:-vedaai_user}:${POSTGRES_PASSWORD:-vedaai_password}@db:5432/${POSTGRES_DB:-vedaai_db}
+      CORS_ORIGINS: '["http://localhost:3000","http://127.0.0.1:3000","http://localhost:3100","http://127.0.0.1:3100"]'
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.5-flash}
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - vedaai-network
+
+  # ----------------------------------------------------------------------------
+  # Next.js Frontend Web (Host Port 3100 -> Container Port 3000)
+  # ----------------------------------------------------------------------------
+  web:
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8100}
+    container_name: vedaai-web
+    restart: unless-stopped
+    ports:
+      - "${WEB_PORT:-3100}:3000"
+    environment:
+      PORT: 3000
+      HOSTNAME: "0.0.0.0"
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8100}
+    depends_on:
+      - api
+    networks:
+      - vedaai-network
+
+volumes:
+  pgdata:
+    name: vedaai-pgdata
+
+networks:
+  vedaai-network:
+    name: vedaai-network
+    driver: bridge

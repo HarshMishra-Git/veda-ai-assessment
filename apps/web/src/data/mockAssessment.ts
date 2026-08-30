@@ -1,0 +1,140 @@
+import { QuestionItem } from '@/types/assessment';
+
+export const INITIAL_QUESTIONS: QuestionItem[] = [
+  {
+    id: 'q1',
+    number: 1,
+    text: 'Which blood vessel carries blood away from the heart?',
+    maxMarks: 2,
+    obtainedMarks: 2,
+    mappedPage: 1,
+    highlightBox: { x: 8, y: 8, width: 84, height: 18 },
+  },
+  {
+    id: 'q2',
+    number: 2,
+    text: 'Which of the following organelles is primarily involved in photosynthesis?',
+    maxMarks: 2,
+    obtainedMarks: 2,
+    aiFeedback: 'Excellent work! You correctly identified the chloroplast as the organelle responsible for photosynthesis. Keep it up!',
+    mappedPage: 1,
+    highlightBox: { x: 6, y: 44, width: 88, height: 16 },
+  },
+  {
+    id: 'q3',
+    number: 3,
+    text: 'Explain the role of chloroplasts in photosynthesis, naming the main pigments involved and briefly outlining the two major stages of the process.',
+    maxMarks: 2,
+    obtainedMarks: 2,
+    mappedPage: 1,
+    highlightBox: { x: 8, y: 28, width: 84, height: 14 },
+  },
+  {
+    id: 'q4',
+    number: 4,
+    text: 'Describe the flow of blood through the human heart starting from the right atrium and ending at the aorta; include the names of valves crossed.',
+    maxMarks: 2,
+    obtainedMarks: 0,
+    mappedPage: 2,
+    highlightBox: { x: 8, y: 10, width: 84, height: 22 },
+  },
+  {
+    id: 'q5',
+    number: 5,
+    text: 'Draw a labelled diagram of an alveolus showing capillaries and air space (label alveolar sac, capillary, and direction of gas exchange).',
+    maxMarks: 2,
+    obtainedMarks: 2,
+    mappedPage: 2,
+    highlightBox: { x: 8, y: 35, width: 84, height: 28 },
+  },
+  {
+    id: 'q6',
+    number: 6,
+    text: 'Draw a neat labelled diagram of the human digestive system (stomach, small intestine, large intestine, liver, pancreas) and label the site where most absorption occurs.',
+    maxMarks: 5,
+    obtainedMarks: 4,
+    mappedPage: 3,
+    highlightBox: { x: 8, y: 8, width: 84, height: 35 },
+  },
+  {
+    id: 'q7',
+    number: 7,
+    text: 'Draw and label a nephron (Bowman’s capsule, glomerulus, proximal tubule, loop of Henle, distal tubule, collecting duct).',
+    maxMarks: 5,
+    obtainedMarks: 5,
+    mappedPage: 3,
+    highlightBox: { x: 8, y: 46, width: 84, height: 32 },
+  },
+  {
+    id: 'q8',
+    number: 8,
+    text: 'Explain the structural differences between palisade mesophyll and spongy mesophyll and state how each structure aids its function in the leaf.',
+    maxMarks: 5,
+    obtainedMarks: 3,
+    mappedPage: 4,
+    highlightBox: { x: 8, y: 10, width: 84, height: 25 },
+  },
+  {
+    id: 'q9',
+    number: 9,
+    text: 'Describe the process of transpiration in plants in two to three sentences and name two environmental factors that increase its rate.',
+    maxMarks: 5,
+    obtainedMarks: 5,
+    mappedPage: 4,
+    highlightBox: { x: 8, y: 38, width: 84, height: 22 },
+  },
+  {
+    id: 'q10',
+    number: 10,
+    text: 'Explain how the structure of xylem vessels facilitates water transport in plants (mention one structural feature and its role).',
+    maxMarks: 5,
+    obtainedMarks: 4,
+    mappedPage: 4,
+    highlightBox: { x: 8, y: 64, width: 84, height: 22 },
+  },
+  {
+    id: 'q11',
+    number: 11,
+    text: 'A diagram shows two potted plants — Plant A in bright light with broad green leaves, Plant B kept in dim light with pale, elongated leaves.',
+    maxMarks: 5,
+    mappedPage: 1,
+    subQuestions: [
+      {
+        id: 'q11a',
+        subLabel: 'a.',
+        text: 'A diagram shows two potted plants — Plant A in bright light with broad green leaves, Plant B kept in dim light with pale, elongated leaves.',
+        maxMarks: 2,
+        obtainedMarks: 2,
+        mappedPage: 1,
+        highlightBox: { x: 8, y: 10, width: 84, height: 16 }
+      },
+      {
+        id: 'q11b',
+        subLabel: 'b.',
+        text: 'Suggest one practical measure to help Plant B recover.',
+        maxMarks: 3,
+        obtainedMarks: 1,
+        mappedPage: 1,
+        highlightBox: { x: 8, y: 28, width: 84, height: 14 }
+      }
+    ]
+  },
+  {
+    id: 'q12',
+    number: 12,
+    text: 'A resting person has tidal volume (air per breath) of 0.5 L and breathes 12 times per minute.',
+    maxMarks: 5,
+    obtainedMarks: 4,
+    mappedPage: 2,
+    highlightBox: { x: 8, y: 66, width: 84, height: 18 }
+  },
+  {
+    id: 'q13',
+    number: 13,
+    text: 'If dead space is 0.15 L per breath, calculate the alveolar ventilation per minute. Show working.',
+    maxMarks: 5,
+    obtainedMarks: 4,
+    mappedPage: 2,
+    highlightBox: { x: 8, y: 84, width: 84, height: 14 }
+  }
+];
